@@ -1,9 +1,6 @@
 # --- 科学上网插件 (存在冲突，请二选一使用) ---
 CONFIG_PACKAGE_luci-app-daed=y
 CONFIG_PACKAGE_dae=y
-CONFIG_PACKAGE_luci-app-nikki=y
-CONFIG_PACKAGE_luci-app-mosdns=y
-CONFIG_PACKAGE_v2ray-geodata-updater=y
 
 # --- 核心网络功能 ---
 CONFIG_PACKAGE_luci-app-mwan3=y
@@ -47,15 +44,7 @@ CONFIG_PACKAGE_kmod-veth=y
 CONFIG_PACKAGE_kmod-nft-tproxy=y
 CONFIG_PACKAGE_kmod-nft-offload=y
 CONFIG_PACKAGE_kmod-nft-fullcone=y
-# USB相关
-CONFIG_PACKAGE_kmod-usb3=y
-CONFIG_PACKAGE_kmod-usb-dwc3=y
-CONFIG_PACKAGE_kmod-usb-dwc3-qcom=y
-CONFIG_PACKAGE_kmod-usb-net=y
-CONFIG_PACKAGE_kmod-usb-net-rtl8152=y
-CONFIG_PACKAGE_kmod-usb-net-asix-ax88179=y
-CONFIG_PACKAGE_kmod-usb-storage=y
-CONFIG_PACKAGE_kmod-usb-storage-uas=y
+
 # 文件系统
 CONFIG_PACKAGE_kmod-fs-ext4=y
 CONFIG_PACKAGE_kmod-fs-f2fs=y
