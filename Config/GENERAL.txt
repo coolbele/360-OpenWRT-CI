@@ -7,12 +7,8 @@ CONFIG_PACKAGE_luci-app-mwan3=y
 CONFIG_PACKAGE_luci-i18n-mwan3-zh-cn=y
 CONFIG_PACKAGE_luci-app-syncdial=y
 CONFIG_PACKAGE_luci-app-upnp=y
-CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-socat=y
 CONFIG_PACKAGE_luci-app-msd_lite=y
-CONFIG_PACKAGE_luci-proto-wireguard=y
-CONFIG_PACKAGE_luci-app-zerotier=y
-CONFIG_PACKAGE_luci-proto-relay=y
 
 # --- 系统工具与增强 ---
 CONFIG_PACKAGE_luci-app-cpufreq=y
@@ -27,14 +23,17 @@ CONFIG_PACKAGE_automount=y
 CONFIG_PACKAGE_block-mount=y
 CONFIG_PACKAGE_coremark=y
 CONFIG_PACKAGE_bash=y
+# --- 文件传输工具 ---
+CONFIG_PACKAGE_luci-app-filetransfer=y
 
 # --- 硬件驱动 (360V6 必备) ---
 CONFIG_PACKAGE_ipq-wifi-qihoo_360v6=y
 CONFIG_PACKAGE_ath11k-firmware-ipq6018=y
 CONFIG_PACKAGE_kmod-ath11k-ahb=y
 CONFIG_PACKAGE_kmod-qca-nss-dp=y
-CONFIG_PACKAGE_kmod-gpio-button-hotplug=y
-CONFIG_PACKAGE_kmod-leds-gpio=y
+CONFIG_PACKAGE_wpad-mesh-openssl=y
+
+
 
 # --- 内核模块与文件系统 ---
 CONFIG_PACKAGE_kmod-tcp-bbr=y
@@ -44,6 +43,18 @@ CONFIG_PACKAGE_kmod-veth=y
 CONFIG_PACKAGE_kmod-nft-tproxy=y
 CONFIG_PACKAGE_kmod-nft-offload=y
 CONFIG_PACKAGE_kmod-nft-fullcone=y
+
+CONFIG_PACKAGE_luci-app-ddns=y
+CONFIG_PACKAGE_luci-i18n-ddns-zh-cn=y
+CONFIG_PACKAGE_ddns-scripts=y
+
+# --- 常用服务商脚本 (按需选择) ---
+CONFIG_PACKAGE_ddns-scripts-cloudflare=y 
+
+# --- HTTPS 更新支持 (必须安装，否则无法连接服务商 API) ---
+CONFIG_PACKAGE_libustream-openssl=y
+CONFIG_PACKAGE_ca-bundle=y
+CONFIG_PACKAGE_curl=y
 
 # 文件系统
 CONFIG_PACKAGE_kmod-fs-ext4=y
@@ -62,3 +73,18 @@ CONFIG_PACKAGE_bind-dig=y
 CONFIG_PACKAGE_bind-nslookup=y
 CONFIG_PACKAGE_openssh-sftp-server=y
 CONFIG_PACKAGE_default-settings-chn=y
+
+# --- IPSec VPN 核心组件 ---
+CONFIG_PACKAGE_luci-app-ipsec-vpnd=y
+CONFIG_PACKAGE_luci-i18n-ipsec-vpnd-zh-cn=y
+
+# --- 强力加密支持 (IPSec 必需) ---
+CONFIG_PACKAGE_strongswan=y
+CONFIG_PACKAGE_kmod-ipsec=y
+CONFIG_PACKAGE_kmod-ipt-ipsec=y
+
+# --- 硬件加速 (360V6 IPQ60xx 建议开启) ---
+# IPQ60xx 的内核 6.6 支持硬件加密加速，这能显著降低 VPN 运行时的 CPU 占用
+CONFIG_PACKAGE_kmod-crypto-cbc=y
+CONFIG_PACKAGE_kmod-crypto-hmac=y
+CONFIG_PACKAGE_kmod-crypto-sha256=y
