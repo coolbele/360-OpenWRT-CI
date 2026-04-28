@@ -10,9 +10,8 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 #PKG_SOURCE_URL:=https://github.com/daeuniverse/dae.git
-PKG_SOURCE_URL:=https://github.com/LostAttractor/dae.git
-OUTBOUND_URL:=https://github.com/LostAttractor/outbound.git
-GIT_BRANCH:=next
+PKG_SOURCE_URL:=https://github.com/olicesx/dae.git
+GIT_BRANCH:=kdae
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_VERSION:=$(shell git ls-remote $(PKG_SOURCE_URL) $(GIT_BRANCH) | cut -c1-7)
 PKG_MIRROR_HASH:=
@@ -27,19 +26,26 @@ PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=github.com/daeuniverse/dae
 GO_PKG_EXCLUDES:=control/kern/tests
+GO_PKG_LDFLAGS:= \
+	-s -w -buildid= \
+	-linkmode external -extldflags '-static -Wl,-s'
 GO_PKG_LDFLAGS_X:= \
 	$(GO_PKG)/cmd.Version=$(PKG_SOURCE_VERSION) \
 	$(GO_PKG)/common/consts.MaxMatchSetLen_=1024
-GO_PKG_TAGS:=embedallowed
-GO_PKG_TARGET_VARS:=$(filter-out CGO_ENABLED=%,$(GO_PKG_TARGET_VARS)) \
-	CGO_ENABLED=1 \
-	GOEXPERIMENT=greenteagc
+GO_PKG_TAGS:=embedallowed,trace
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/bpf.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
 
-GO_PKG_DEFAULT_LDFLAGS:=-w -s -extldflags "-static"
+GO_PKG_BUILD_VARS+= \
+	GOFLAGS="-trimpath -buildvcs=false -pgo=auto"
+
+GO_PKG_TARGET_VARS+= \
+	CGO_LDFLAGS="$(TARGET_LDFLAGS) -static -Wl,-s" \
+	CGO_ENABLED=1 \
+	GOEXPERIMENT=newinliner,simd
+
 TAR_CMD=$(HOST_TAR) -C $(BUILD_DIR)/ $(TAR_OPTIONS)
 
 define Package/dae/Default
@@ -79,9 +85,13 @@ endef
 
 define Build/Prepare
 	( \
-		rm -rf $(PKG_BUILD_DIR) && git clone $(PKG_SOURCE_URL) $(PKG_BUILD_DIR) && git -C $(PKG_BUILD_DIR) checkout $(GIT_BRANCH) ; \
-		rm -rf outbound && git clone $(OUTBOUND_URL) $(PKG_BUILD_DIR)/../outbound && git -C $(PKG_BUILD_DIR)/../outbound checkout $(GIT_BRANCH) ; \
+		rm -rf $(PKG_BUILD_DIR) && git clone -b $(GIT_BRANCH) $(PKG_SOURCE_URL) $(PKG_BUILD_DIR) ; \
 		pushd $(PKG_BUILD_DIR) ; \
+		rm -rf outbound && git clone --depth=1 -b perf/complete-optimizations https://github.com/olicesx/outbound.git outbound ; \
+		rm -rf quic-go && git clone --depth=1 -b main https://github.com/olicesx/quic-go.git quic-go ; \
+		go mod edit -replace github.com/daeuniverse/outbound=./outbound ; \
+		go mod edit -replace github.com/daeuniverse/quic-go=./quic-go ; \
+		go get -u=patch ; \
 		git submodule update --init ; \
 		go mod tidy ; \
 		popd ; \
