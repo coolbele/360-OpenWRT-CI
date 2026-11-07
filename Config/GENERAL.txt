@@ -1,9 +1,10 @@
-CONFIG_PACKAGE_luci-app-passwall=y
-CONFIG_PACKAGE_luci-i18n-passwall-zh-cn=y
-CONFIG_PACKAGE_luci-app-passwall_INCLUDE_SingBox=y
+#CONFIG_PACKAGE_luci-app-passwall=y
+#CONFIG_PACKAGE_luci-i18n-passwall-zh-cn=y
+#CONFIG_PACKAGE_luci-app-passwall_INCLUDE_SingBox=y
 CONFIG_PACKAGE_luci-app-smartdns=y
 CONFIG_PACKAGE_luci-i18n-smartdns-zh-cn=y
-CONFIG_PACKAGE_v2ray-geodata-updater=y
+#CONFIG_PACKAGE_v2ray-geodata-updater=y
+CONFIG_PACKAGE_luci-app-honk=y
 
 # 多拨、MSD Lite、WireGuard 与 AC 管理
 CONFIG_PACKAGE_luci-app-gecoosac=y
@@ -27,6 +28,7 @@ CONFIG_PACKAGE_luci-app-vlmcsd=y
 CONFIG_PACKAGE_luci-app-cpufreq=y
 
 # 精简移除重型与冲突应用
+
 CONFIG_PACKAGE_luci-app-homeproxy=n
 CONFIG_PACKAGE_luci-app-mosdns=n
 CONFIG_PACKAGE_luci-app-samba4=n
