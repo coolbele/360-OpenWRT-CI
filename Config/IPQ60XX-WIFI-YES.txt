@@ -25,7 +25,7 @@ CONFIG_PACKAGE_sqm-scripts-nss=n
 CONFIG_PACKAGE_kmod-qca-nss-crypto=n
 
 # 1. 完整的 hostapd/wpad（提供 WPA3-SAE / 802.11s 加密支持，非常关键）
-CONFIG_PACKAGE_wpad-mesh-openssl=y
+CONFIG_PACKAGE_wpad-openssl=y
 # 或者选择 wpad-openssl / wpad-mbedtls（如果空间紧张可用 wpad-mesh-mbedtls）
 
 # 2. 基础无线工具与 802.11s 支持
