@@ -80,37 +80,45 @@ UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main"
 UPDATE_PACKAGE "timecontrol" "sirpdboy/luci-app-timecontrol" "main"
 UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "axonhub gecoosac sing-box luci-app-homeproxy luci-app-timewol luci-app-wolplus luci-app-wolultra"
 
+
 # ==========================================
 # Pin sing-box to official v1.12.14
 # ==========================================
 
 SINGBOX_MAKEFILE="./packages/sing-box/Makefile"
+SINGBOX_VERSION="1.12.14"
+SINGBOX_URL="https://codeload.github.com/SagerNet/sing-box/tar.gz/v${SINGBOX_VERSION}"
 
 if [ ! -f "$SINGBOX_MAKEFILE" ]; then
-    echo "ERROR: sing-box Makefile not found: $SINGBOX_MAKEFILE"
+    echo "ERROR: sing-box Makefile not found!"
     exit 1
 fi
 
-SINGBOX_VERSION="1.12.14"
+echo "Downloading sing-box v${SINGBOX_VERSION} source..."
 
-echo "Downloading sing-box v${SINGBOX_VERSION} source hash..."
+curl -fL "$SINGBOX_URL" -o /tmp/sing-box-v${SINGBOX_VERSION}.tar.gz || {
+    echo "ERROR: Download sing-box source failed!"
+    exit 1
+}
 
-SINGBOX_HASH=$(curl -fsSL \
-    "https://codeload.github.com/SagerNet/sing-box/tar.gz/v${SINGBOX_VERSION}" \
-    | sha256sum | awk '{print $1}')
+SINGBOX_HASH=$(sha256sum /tmp/sing-box-v${SINGBOX_VERSION}.tar.gz | awk '{print $1}')
 
 if [ -z "$SINGBOX_HASH" ]; then
-    echo "ERROR: Failed to calculate sing-box source hash"
+    echo "ERROR: SHA256 calculation failed!"
     exit 1
 fi
 
+# Update all source version fields
 sed -i "s|^PKG_VERSION:=.*|PKG_VERSION:=${SINGBOX_VERSION}|" "$SINGBOX_MAKEFILE"
-sed -i "s|^PKG_SOURCE_URL:=.*|PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v\$(PKG_VERSION)|" "$SINGBOX_MAKEFILE"
+sed -i "s|^PKG_SOURCE:=.*|PKG_SOURCE:=sing-box-${SINGBOX_VERSION}.tar.gz|" "$SINGBOX_MAKEFILE"
+sed -i "s|^PKG_SOURCE_URL:=.*|PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v\$(PKG_VERSION)?|" "$SINGBOX_MAKEFILE"
 sed -i "s|^PKG_HASH:=.*|PKG_HASH:=${SINGBOX_HASH}|" "$SINGBOX_MAKEFILE"
 
-echo "========== sing-box version pinned =========="
-grep -E '^PKG_VERSION:=|^PKG_SOURCE_URL:=|^PKG_HASH:=' "$SINGBOX_MAKEFILE"
-echo "=============================================="
+rm -f /tmp/sing-box-v${SINGBOX_VERSION}.tar.gz
+
+echo "========== sing-box pinned version =========="
+grep -E '^PKG_VERSION:=|^PKG_SOURCE:=|^PKG_SOURCE_URL:=|^PKG_HASH:=' "$SINGBOX_MAKEFILE"
+echo "============================================="
 
 UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
 UPDATE_PACKAGE "luci-app-daed" "QiuSimons/luci-app-daed" "kix"
