@@ -81,43 +81,40 @@ UPDATE_PACKAGE "timecontrol" "sirpdboy/luci-app-timecontrol" "main"
 UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "axonhub gecoosac sing-box luci-app-homeproxy luci-app-timewol luci-app-wolplus luci-app-wolultra"
 
 
+
 # ==========================================
-# Pin sing-box to official v1.12.14
+# Pin sing-box to v1.12.14
 # ==========================================
 
 SINGBOX_MAKEFILE="./packages/sing-box/Makefile"
 SINGBOX_VERSION="1.12.14"
-SINGBOX_URL="https://codeload.github.com/SagerNet/sing-box/tar.gz/v${SINGBOX_VERSION}"
+SINGBOX_URL="https://codeload.github.com/SagerNet/sing-box/tar.gz/v${SINGBOX_VERSION}?"
 
 if [ ! -f "$SINGBOX_MAKEFILE" ]; then
     echo "ERROR: sing-box Makefile not found!"
     exit 1
 fi
 
-echo "Downloading sing-box v${SINGBOX_VERSION} source..."
+echo "Downloading sing-box ${SINGBOX_VERSION} source..."
 
-curl -fL "$SINGBOX_URL" -o /tmp/sing-box-v${SINGBOX_VERSION}.tar.gz || {
-    echo "ERROR: Download sing-box source failed!"
-    exit 1
-}
+curl -fL --retry 3 \
+    "https://codeload.github.com/SagerNet/sing-box/tar.gz/v${SINGBOX_VERSION}" \
+    -o /tmp/sing-box-${SINGBOX_VERSION}.tar.gz || exit 1
 
-SINGBOX_HASH=$(sha256sum /tmp/sing-box-v${SINGBOX_VERSION}.tar.gz | awk '{print $1}')
+SINGBOX_HASH=$(sha256sum /tmp/sing-box-${SINGBOX_VERSION}.tar.gz | awk '{print $1}')
 
 if [ -z "$SINGBOX_HASH" ]; then
     echo "ERROR: SHA256 calculation failed!"
     exit 1
 fi
 
-# Update all source version fields
-sed -i "s|^PKG_VERSION:=.*|PKG_VERSION:=${SINGBOX_VERSION}|" "$SINGBOX_MAKEFILE"
-sed -i "s|^PKG_SOURCE:=.*|PKG_SOURCE:=sing-box-${SINGBOX_VERSION}.tar.gz|" "$SINGBOX_MAKEFILE"
-sed -i "s|^PKG_SOURCE_URL:=.*|PKG_SOURCE_URL:=https://codeload.github.com/SagerNet/sing-box/tar.gz/v\$(PKG_VERSION)?|" "$SINGBOX_MAKEFILE"
+sed -i "s|^PKG_UPSTREAM_VERSION:=.*|PKG_UPSTREAM_VERSION:=${SINGBOX_VERSION}|" "$SINGBOX_MAKEFILE"
 sed -i "s|^PKG_HASH:=.*|PKG_HASH:=${SINGBOX_HASH}|" "$SINGBOX_MAKEFILE"
 
-rm -f /tmp/sing-box-v${SINGBOX_VERSION}.tar.gz
+rm -f /tmp/sing-box-${SINGBOX_VERSION}.tar.gz
 
-echo "========== sing-box pinned version =========="
-grep -E '^PKG_VERSION:=|^PKG_SOURCE:=|^PKG_SOURCE_URL:=|^PKG_HASH:=' "$SINGBOX_MAKEFILE"
+echo "========== sing-box version check =========="
+grep -E '^PKG_UPSTREAM_VERSION:=|^PKG_VERSION:=|^PKG_SOURCE:=|^PKG_SOURCE_URL:=|^PKG_HASH:=' "$SINGBOX_MAKEFILE"
 echo "============================================="
 
 UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
