@@ -78,44 +78,6 @@ UPDATE_PACKAGE "qbittorrent" "sbwml/luci-app-qbittorrent" "master" "" "qt6base q
 #UPDATE_PACKAGE "qmodem" "FUjr/QModem" "main"
 UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main"
 UPDATE_PACKAGE "timecontrol" "sirpdboy/luci-app-timecontrol" "main"
-UPDATE_PACKAGE "viking" "VIKINGYFY/packages" "main" "" "axonhub gecoosac sing-box luci-app-homeproxy luci-app-timewol luci-app-wolplus luci-app-wolultra"
-
-
-
-# ==========================================
-# Pin sing-box to v1.12.14
-# ==========================================
-
-SINGBOX_MAKEFILE="./packages/sing-box/Makefile"
-SINGBOX_VERSION="1.12.14"
-SINGBOX_URL="https://codeload.github.com/SagerNet/sing-box/tar.gz/v${SINGBOX_VERSION}?"
-
-if [ ! -f "$SINGBOX_MAKEFILE" ]; then
-    echo "ERROR: sing-box Makefile not found!"
-    exit 1
-fi
-
-echo "Downloading sing-box ${SINGBOX_VERSION} source..."
-
-curl -fL --retry 3 \
-    "https://codeload.github.com/SagerNet/sing-box/tar.gz/v${SINGBOX_VERSION}" \
-    -o /tmp/sing-box-${SINGBOX_VERSION}.tar.gz || exit 1
-
-SINGBOX_HASH=$(sha256sum /tmp/sing-box-${SINGBOX_VERSION}.tar.gz | awk '{print $1}')
-
-if [ -z "$SINGBOX_HASH" ]; then
-    echo "ERROR: SHA256 calculation failed!"
-    exit 1
-fi
-
-sed -i "s|^PKG_UPSTREAM_VERSION:=.*|PKG_UPSTREAM_VERSION:=${SINGBOX_VERSION}|" "$SINGBOX_MAKEFILE"
-sed -i "s|^PKG_HASH:=.*|PKG_HASH:=${SINGBOX_HASH}|" "$SINGBOX_MAKEFILE"
-
-rm -f /tmp/sing-box-${SINGBOX_VERSION}.tar.gz
-
-echo "========== sing-box version check =========="
-grep -E '^PKG_UPSTREAM_VERSION:=|^PKG_VERSION:=|^PKG_SOURCE:=|^PKG_SOURCE_URL:=|^PKG_HASH:=' "$SINGBOX_MAKEFILE"
-echo "============================================="
 
 UPDATE_PACKAGE "vnt" "lmq8267/luci-app-vnt" "main"
 UPDATE_PACKAGE "luci-app-daed" "QiuSimons/luci-app-daed" "kix"
