@@ -3,6 +3,9 @@ name: QCA-6.18-VIKINGYFY
 
 #CI计划
 on:
+  # 定时编译：每天早上6点（北京时间 06:00 = UTC 22:00）
+  schedule:
+    - cron: '0 21 * * *'
   #自动编译：当Auto-Clean运行完成后
   workflow_run:
     workflows: ["Auto-Clean"]
@@ -45,13 +48,13 @@ jobs:
       #默认主题
       WRT_THEME: argon
       #默认主机名
-      WRT_NAME: DAE-WRT
+      WRT_NAME: YUYU-WRT
       #默认WIFI名称
-      WRT_SSID: DAE-WRT
+      WRT_SSID: YUYU-WRT
       #默认WIFI密码
       WRT_WORD: 12345678
       #默认地址
-      WRT_IP: 192.168.10.1
+      WRT_IP: 10.0.10.1
       #默认密码，仅作提示，修改无用
       WRT_PW: 无
       #源码链接
